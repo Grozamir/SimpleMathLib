@@ -1,4 +1,4 @@
-#include "library.h"
+#include "SimpleMath.hpp"
 
 namespace mathlib {
 

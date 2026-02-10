@@ -3,4 +3,4 @@ project(SimpleMathLib)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(SimpleMathLib STATIC library.cpp)
+add_library(SimpleMathLib STATIC SimpleMath.cpp)
