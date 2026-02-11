@@ -14,8 +14,12 @@ namespace mathlib {
         return a * b;
     }
 
-    int32_t div(int32_t a, int32_t b) {
-        return a / b;
+    bool div(int32_t a, int32_t b, int32_t& result) {
+        if ( b == 0 ) {
+            return false;
+        }
+        result = a / b;
+        return true;
     }
 
     int32_t pow(int32_t a, int32_t b) {
