@@ -1,40 +1,98 @@
 #include "SimpleMath.hpp"
 
+#include <limits>
+
 namespace mathlib {
 
-    int32_t add(int32_t a, int32_t b) {
-        return a + b;
+constexpr int32_t MIN_I32 = std::numeric_limits<int32_t>::min();
+constexpr int32_t MAX_I32 = std::numeric_limits<int32_t>::max();
+
+bool add( int32_t a, int32_t b, int32_t& result ) {
+    if ( ( b > 0 && a > MAX_I32 - b ) ||
+         ( b < 0 && a < MIN_I32 - b ) ) {
+        return false;
     }
 
-    int32_t sub(int32_t a, int32_t b) {
-        return a - b;
+    result = a + b;
+
+    return true;
+}
+
+bool sub( int32_t a, int32_t b, int32_t& result ) {
+    if ( ( b < 0 && a > MAX_I32 + b ) ||
+         ( b > 0 && a < MIN_I32 + b ) ) {
+        return false;
     }
 
-    int32_t mul(int32_t a, int32_t b) {
-        return a * b;
-    }
+    result = a - b;
 
-    bool div(int32_t a, int32_t b, int32_t& result) {
-        if ( b == 0 ) {
-            return false;
-        }
-        result = a / b;
+    return true;
+}
+
+bool mul( int32_t a, int32_t b, int32_t& result ) {
+    if ( a == 0 || b == 0 ) {
+        result = 0;
         return true;
     }
 
-    int32_t pow(int32_t a, int32_t b) {
-        int32_t result = a;
-        for ( int32_t i = 0; i < b; ++i ) {
-            result *= a;
-        }
-        return 0;
+    if ( a == -1 && b == MIN_I32 ) {
+        return false;
+    }
+    if ( b == -1 && a == MIN_I32 ) {
+        return false;
     }
 
-    int32_t factorial(int32_t a) {
-        if ( a == 1 ) {
-            return 1;
-        }
-        return a * factorial(a - 1);
+    if ( a > MAX_I32 / b || a < MIN_I32 / b ) {
+        return false;
     }
 
+    result = a * b;
+
+    return true;
 }
+
+bool div( int32_t a, int32_t b, int32_t& result ) {
+    if ( b == 0 ) {
+        return false;
+    }
+    if ( a == MIN_I32 && b == -1 ) {
+        return false;
+    }
+
+    result = a / b;
+    return true;
+}
+
+bool pow( int32_t a, int32_t b, int32_t& result ) {
+    if ( b < 0 ) {
+        return false;
+    }
+
+    int32_t tempResult = a;
+    for ( int32_t i = 0; i < b; ++i ) {
+        if ( !mul( tempResult, a, tempResult ) ) {
+            return false;
+        }
+    }
+    result = tempResult;
+    return true;
+}
+
+bool factorial( int32_t a, int32_t& result ) {
+    if ( a < 0 ) {
+        return false;
+    }
+    if ( a == 1 ) {
+        result = a;
+        return true;
+    }
+
+    int32_t tempResult;
+    if ( !factorial( a - 1, tempResult ) ) {
+        return false;
+    }
+
+    return mul( a, tempResult, result );
+}
+
+}  // namespace mathlib
