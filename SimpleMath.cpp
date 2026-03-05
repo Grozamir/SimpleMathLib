@@ -1,98 +1,80 @@
 #include "SimpleMath.hpp"
 
-#include <limits>
+#include <stdexcept>
 
 namespace mathlib {
 
-constexpr int32_t MIN_I32 = std::numeric_limits<int32_t>::min();
-constexpr int32_t MAX_I32 = std::numeric_limits<int32_t>::max();
-
-bool add( int32_t a, int32_t b, int32_t& result ) {
+int32_t SimpleMath::Add( int32_t a, int32_t b ) {
     if ( ( b > 0 && a > MAX_I32 - b ) ||
          ( b < 0 && a < MIN_I32 - b ) ) {
-        return false;
+        throw std::overflow_error("Addition overflow");
     }
 
-    result = a + b;
-
-    return true;
+    return a + b;
 }
 
-bool sub( int32_t a, int32_t b, int32_t& result ) {
+int32_t SimpleMath::Sub( int32_t a, int32_t b ) {
     if ( ( b < 0 && a > MAX_I32 + b ) ||
          ( b > 0 && a < MIN_I32 + b ) ) {
-        return false;
+        throw std::overflow_error("Subtraction overflow");
     }
 
-    result = a - b;
-
-    return true;
+    return a - b;
 }
 
-bool mul( int32_t a, int32_t b, int32_t& result ) {
+int32_t SimpleMath::Mul( int32_t a, int32_t b) {
     if ( a == 0 || b == 0 ) {
-        result = 0;
-        return true;
+       return 0;
     }
 
     if ( a == -1 && b == MIN_I32 ) {
-        return false;
+        throw std::overflow_error("Multiplication overflow");
     }
     if ( b == -1 && a == MIN_I32 ) {
-        return false;
+        throw std::overflow_error("Multiplication overflow");
     }
-
     if ( a > MAX_I32 / b || a < MIN_I32 / b ) {
-        return false;
+        throw std::overflow_error("Multiplication overflow");
     }
 
-    result = a * b;
-
-    return true;
+    return a * b;
 }
 
-bool div( int32_t a, int32_t b, int32_t& result ) {
+int32_t SimpleMath::Div( int32_t a, int32_t b ) {
     if ( b == 0 ) {
-        return false;
+        throw std::invalid_argument("Division by zero");
     }
     if ( a == MIN_I32 && b == -1 ) {
-        return false;
+        throw std::overflow_error("Division overflow");
     }
 
-    result = a / b;
-    return true;
+    return a / b;
 }
 
-bool pow( int32_t a, int32_t b, int32_t& result ) {
+int32_t SimpleMath::Pow( int32_t a, int32_t b) {
     if ( b < 0 ) {
-        return false;
+        throw std::invalid_argument("Negative power");
     }
 
-    int32_t tempResult = a;
+    int32_t result = a;
     for ( int32_t i = 0; i < b; ++i ) {
-        if ( !mul( tempResult, a, tempResult ) ) {
-            return false;
-        }
+        result = Mul( result, a );
     }
-    result = tempResult;
-    return true;
+
+    return result;
 }
 
-bool factorial( int32_t a, int32_t& result ) {
+int32_t SimpleMath::Factorial( int32_t a ) {
     if ( a < 0 ) {
-        return false;
+        throw std::invalid_argument("Negative factorial");
     }
-    if ( a == 1 ) {
-        result = a;
-        return true;
-    }
-
-    int32_t tempResult;
-    if ( !factorial( a - 1, tempResult ) ) {
-        return false;
+    if ( a == 0 || a == 1 ) {
+        return 1;
     }
 
-    return mul( a, tempResult, result );
+    int32_t result = Factorial( a - 1 );
+
+    return Mul( a, result );
 }
 
 }  // namespace mathlib
