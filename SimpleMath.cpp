@@ -56,7 +56,7 @@ int32_t SimpleMath::Pow( int32_t a, int32_t b) {
         throw std::invalid_argument("Negative power");
     }
 
-    int32_t result = a;
+    int32_t result = 1;
     for ( int32_t i = 0; i < b; ++i ) {
         result = Mul( result, a );
     }
